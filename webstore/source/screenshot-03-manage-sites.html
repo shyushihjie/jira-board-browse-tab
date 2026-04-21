@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jira Board Browse Tab | Manage Sites</title>
+    <link rel="stylesheet" href="common.css">
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="noise"></div>
+      <section class="hero">
+        <header class="hero__header">
+          <div>
+            <div class="brand">
+              <div class="brand__mark">
+                <img src="../../icons/icon128.png" alt="">
+              </div>
+              <div>
+                <p class="eyebrow">Chrome Web Store Screenshot 03</p>
+                <h1 class="title">Manage connected Jira sites from one settings page</h1>
+              </div>
+            </div>
+            <p class="subtitle">
+              Leave site access connected, toggle the interception behavior per site, or remove a site when you no longer need it.
+            </p>
+          </div>
+          <div class="stack">
+            <div class="badge">Per-site controls</div>
+            <div class="badge badge--ghost">Remove access anytime</div>
+          </div>
+        </header>
+
+        <div class="layout layout--sidebar">
+          <div class="surface settings-page">
+            <div class="settings-hero">
+              <div>
+                <p class="eyebrow">Chrome Web Store Ready</p>
+                <h2>Connected Jira Sites</h2>
+                <p>
+                  This extension only runs on Jira sites you explicitly connect. Remove access here if you no longer want the board-card behavior on a site.
+                </p>
+              </div>
+              <div class="pill pill--blue">Settings page</div>
+            </div>
+
+            <div class="settings-panel">
+              <h3>Sites</h3>
+
+              <div class="site-row">
+                <div>
+                  <h4>ridgefield-ops.atlassian.net</h4>
+                  <p>https://ridgefield-ops.atlassian.net · Host access granted</p>
+                </div>
+                <div class="row-actions">
+                  <div class="toggle">
+                    <div class="toggle__track">
+                      <div class="toggle__thumb"></div>
+                    </div>
+                    Enabled
+                  </div>
+                  <div class="remove">Remove</div>
+                </div>
+              </div>
+
+              <div class="site-row">
+                <div>
+                  <h4>harborline-labs.atlassian.net</h4>
+                  <p>https://harborline-labs.atlassian.net · Host access granted</p>
+                </div>
+                <div class="row-actions">
+                  <div class="toggle">
+                    <div class="toggle__track">
+                      <div class="toggle__thumb"></div>
+                    </div>
+                    Enabled
+                  </div>
+                  <div class="remove">Remove</div>
+                </div>
+              </div>
+
+              <div class="empty">Open a Jira board page and enable the extension from the popup to add another site.</div>
+            </div>
+          </div>
+
+          <div class="callouts">
+            <div class="callout">
+              <h3>Turn behavior off without disconnecting</h3>
+              <p>Useful when you want to pause the `/browse` tab behavior temporarily on a specific Jira instance.</p>
+            </div>
+
+            <div class="callout">
+              <h3>Remove sites cleanly</h3>
+              <p>Removing a site revokes the site-specific host access and clears its local configuration.</p>
+            </div>
+
+            <div class="callout">
+              <h3>Review-friendly state management</h3>
+              <p>The UI exposes explicit enable, disable, and disconnect states instead of hiding failures or permission changes.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

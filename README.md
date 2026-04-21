@@ -7,7 +7,7 @@ Manifest V3 Chrome extension that turns Jira board-card clicks into dedicated `/
 - Works on Jira Cloud board and backlog pages.
 - Lets the user grant access per Jira site from the extension popup.
 - Intercepts board-card clicks and opens the issue in a new tab like:
-  - `https://your-site.atlassian.net/browse/DMIT-878`
+  - `https://your-site.atlassian.net/browse/OPS-878`
 - Avoids remote code, third-party runtime dependencies, and broad required host permissions.
 
 ## Folder Layout

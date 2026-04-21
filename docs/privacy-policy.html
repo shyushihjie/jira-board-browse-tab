@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Privacy Policy | Jira Board Browse Tab</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        --bg: #f4f6fb;
+        --card: #ffffff;
+        --text: #172b4d;
+        --muted: #5e6c84;
+        --accent: #0052cc;
+        --border: #dfe1e6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, #dbe8ff, transparent 32%),
+          linear-gradient(180deg, #f8fbff 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      main {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 56px 20px 80px;
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 38px;
+        line-height: 1.1;
+      }
+
+      .updated {
+        margin-top: 14px;
+        color: var(--muted);
+      }
+
+      .panel {
+        margin-top: 26px;
+        padding: 24px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: 0 18px 40px rgba(9, 30, 66, 0.08);
+      }
+
+      h2 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      p + p,
+      ul {
+        margin-top: 12px;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <p class="eyebrow">Privacy Policy</p>
+      <h1>Jira Board Browse Tab</h1>
+      <p class="updated">Last updated: April 22, 2026</p>
+
+      <section class="panel">
+        <h2>Summary</h2>
+        <p>
+          Jira Board Browse Tab does not collect, sell, or transmit personal data to the developer or any third party.
+          The extension stores a small amount of configuration locally in Chrome so it can remember which Jira sites you
+          connected and whether the behavior is enabled for each site.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>What the extension accesses</h2>
+        <ul>
+          <li>The current active tab URL, so the popup can determine whether the tab is a supported Jira board or backlog page.</li>
+          <li>Host access for Jira sites that you explicitly enable.</li>
+          <li>Local extension storage, so the extension can remember connected Jira sites and per-site enabled state.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>What the extension stores</h2>
+        <ul>
+          <li>The Jira site origins that you connected.</li>
+          <li>Whether card interception is enabled for each connected Jira site.</li>
+          <li>Timestamps associated with those local settings.</li>
+        </ul>
+        <p>
+          This data is stored locally in Chrome extension storage and is removed when the extension is uninstalled. You can
+          also remove site access at any time from the extension options page or Chrome's site access controls.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>What the extension does not do</h2>
+        <ul>
+          <li>It does not send analytics, telemetry, or Jira issue content to any server.</li>
+          <li>It does not execute remotely hosted code.</li>
+          <li>It does not sell data, share data with advertisers, or use the extension for profiling.</li>
+        </ul>
+      </section>
+
+      <section class="panel">
+        <h2>Contact</h2>
+        <p>
+          If you have questions about this policy, use the repository support channel at
+          <a href="https://github.com/shyushihjie/jira-board-browse-tab">github.com/shyushihjie/jira-board-browse-tab</a>.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

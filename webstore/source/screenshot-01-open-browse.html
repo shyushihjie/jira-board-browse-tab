@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jira Board Browse Tab | Open Browse Tabs</title>
+    <link rel="stylesheet" href="common.css">
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="noise"></div>
+      <section class="hero">
+        <header class="hero__header">
+          <div>
+            <div class="brand">
+              <div class="brand__mark">
+                <img src="../../icons/icon128.png" alt="">
+              </div>
+              <div>
+                <p class="eyebrow">Chrome Web Store Screenshot 01</p>
+                <h1 class="title">Open Jira board cards in dedicated issue tabs</h1>
+              </div>
+            </div>
+            <p class="subtitle">
+              Keep the board visible in one tab while each issue opens as a full-page
+              <code>/browse/ISSUE-KEY</code> URL in another.
+            </p>
+          </div>
+          <div class="stack">
+            <div class="badge">Single-purpose workflow</div>
+            <div class="badge badge--ghost">No board sidebar needed</div>
+          </div>
+        </header>
+
+        <div class="layout layout--two-up">
+          <div class="surface browser">
+            <div class="browser__top">
+              <div class="browser__dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="browser__bar">https://ridgefield-ops.atlassian.net/jira/servicedesk/projects/OPS/boards/3</div>
+            </div>
+            <div class="browser__content">
+              <div class="board">
+                <section class="column">
+                  <h3>Queued</h3>
+                  <article class="issue">
+                    <span class="issue__key">OPS-871</span>
+                    <div class="issue__title">Investigate expired admin session</div>
+                    <div class="issue__meta">Unassigned · SLA: 4h</div>
+                  </article>
+                  <article class="issue">
+                    <span class="issue__key">OPS-875</span>
+                    <div class="issue__title">Audit stale browser permissions</div>
+                    <div class="issue__meta">Platform · SLA: 8h</div>
+                  </article>
+                </section>
+
+                <section class="column">
+                  <h3>In Progress</h3>
+                  <article class="issue issue--focus">
+                    <span class="issue__key">OPS-878</span>
+                    <div class="issue__title">Open ticket links in dedicated browse tabs</div>
+                    <div class="issue__meta">Selected card · Ready for review</div>
+                  </article>
+                  <article class="issue">
+                    <span class="issue__key">OPS-880</span>
+                    <div class="issue__title">Refresh extension onboarding copy</div>
+                    <div class="issue__meta">Experience · Owner: SJ</div>
+                  </article>
+                </section>
+
+                <section class="column">
+                  <h3>Done</h3>
+                  <article class="issue">
+                    <span class="issue__key">OPS-862</span>
+                    <div class="issue__title">Ship host-access options page</div>
+                    <div class="issue__meta">Released yesterday</div>
+                  </article>
+                  <article class="issue">
+                    <span class="issue__key">OPS-864</span>
+                    <div class="issue__title">Document local-only storage policy</div>
+                    <div class="issue__meta">Docs complete</div>
+                  </article>
+                </section>
+              </div>
+            </div>
+          </div>
+
+          <div class="callouts">
+            <div class="surface tab-shell">
+              <div class="tab-strip">
+                <div class="tab">Board</div>
+                <div class="tab tab--active">/browse/OPS-878</div>
+              </div>
+              <div class="issue-page">
+                <div class="pill pill--green">Open in its own tab</div>
+                <h3>OPS-878 · Open ticket links in dedicated browse tabs</h3>
+                <p>
+                  Review the issue as a full page while the board stays open in the original tab.
+                </p>
+
+                <div class="fact-grid">
+                  <div class="fact">
+                    <strong>URL</strong>
+                    <span>/browse/OPS-878</span>
+                  </div>
+                  <div class="fact">
+                    <strong>Status</strong>
+                    <span>Ready for review</span>
+                  </div>
+                  <div class="fact">
+                    <strong>Reporter</strong>
+                    <span>Service Desk</span>
+                  </div>
+                  <div class="fact">
+                    <strong>Priority</strong>
+                    <span>Medium</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="callout">
+              <h3>Stable issue URLs</h3>
+              <p>Great for opening several tickets at once, pinning issue tabs, or sharing the exact issue page.</p>
+            </div>
+
+            <div class="callout">
+              <h3>Board stays uncluttered</h3>
+              <p>The original board tab remains focused on the queue instead of swapping into sidebar detail mode.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

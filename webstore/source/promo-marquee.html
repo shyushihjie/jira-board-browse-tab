@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jira Board Browse Tab | Promo Marquee</title>
+    <link rel="stylesheet" href="common.css">
+    <style>
+      html,
+      body {
+        width: 1400px;
+        height: 560px;
+      }
+
+      .marquee {
+        position: absolute;
+        inset: 0;
+        padding: 42px 40px;
+        display: grid;
+        grid-template-columns: 1fr 0.96fr;
+        gap: 28px;
+        align-items: center;
+      }
+
+      .marquee__copy {
+        margin-top: 18px;
+        max-width: 650px;
+        color: var(--muted);
+        font-size: 23px;
+        line-height: 1.35;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="canvas">
+      <div class="noise"></div>
+      <section class="marquee">
+        <div>
+          <div class="brand">
+            <div class="promo__icon">
+              <img src="../../icons/icon128.png" alt="">
+            </div>
+            <div>
+              <p class="eyebrow">Chrome Extension</p>
+              <h1 class="promo__title">Jira Board Browse Tab</h1>
+            </div>
+          </div>
+
+          <p class="marquee__copy">
+            Open Jira board cards in dedicated <code>/browse/ISSUE-KEY</code> tabs instead of the board sidebar.
+          </p>
+
+          <div class="stack" style="margin-top: 24px;">
+            <div class="badge">Per-site host access</div>
+            <div class="badge badge--ghost">Local-only settings</div>
+          </div>
+        </div>
+
+        <div class="mini-board">
+          <div class="mini-board__grid">
+            <div class="mini-board__col">
+              <div class="pill pill--blue">Queued</div>
+              <div class="mini-board__slot"></div>
+              <div class="mini-board__slot"></div>
+            </div>
+            <div class="mini-board__col">
+              <div class="pill pill--green">In Progress</div>
+              <div class="mini-board__slot"></div>
+              <div class="mini-board__slot"></div>
+            </div>
+            <div class="mini-board__col">
+              <div class="pill pill--red">Done</div>
+              <div class="mini-board__slot"></div>
+              <div class="mini-board__slot"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>
