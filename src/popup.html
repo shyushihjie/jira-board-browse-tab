@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jira Board Browse Tab</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="popup">
+      <header class="popup__header">
+        <div>
+          <p class="eyebrow">MV3 Chrome Extension</p>
+          <h1>Jira Board Browse Tab</h1>
+        </div>
+      </header>
+
+      <section id="stateCard" class="card">
+        <p id="stateMessage" class="state">Checking current tab…</p>
+        <p id="siteLabel" class="site hidden"></p>
+
+        <div id="primaryActions" class="actions hidden">
+          <button id="enableButton" class="button button--primary" type="button">Enable on this Jira site</button>
+          <label id="toggleRow" class="toggle hidden">
+            <input id="enabledToggle" type="checkbox">
+            <span>Open board cards in a dedicated <code>/browse</code> tab</span>
+          </label>
+          <button id="disconnectButton" class="button button--secondary hidden" type="button">Remove this site</button>
+        </div>
+      </section>
+
+      <footer class="popup__footer">
+        <button id="openOptionsButton" class="link-button" type="button">Manage connected sites</button>
+      </footer>
+    </main>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

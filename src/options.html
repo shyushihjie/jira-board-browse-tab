@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jira Board Browse Tab Settings</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">Chrome Web Store Ready</p>
+        <h1>Connected Jira Sites</h1>
+        <p class="lede">
+          This extension only runs on Jira sites you explicitly connect. Remove access here if you no longer want the board-card behavior on a site.
+        </p>
+      </header>
+
+      <section class="panel">
+        <div class="panel__header">
+          <h2>Sites</h2>
+        </div>
+        <div id="emptyState" class="empty hidden">
+          No Jira sites are connected yet. Open a Jira board page and enable the extension from the popup.
+        </div>
+        <ul id="siteList" class="site-list"></ul>
+      </section>
+    </main>
+
+    <template id="siteTemplate">
+      <li class="site-item">
+        <div class="site-item__info">
+          <h3 class="site-item__title"></h3>
+          <p class="site-item__meta"></p>
+        </div>
+        <div class="site-item__actions">
+          <label class="toggle">
+            <input class="site-toggle" type="checkbox">
+            <span>Enabled</span>
+          </label>
+          <button class="site-remove" type="button">Remove</button>
+        </div>
+      </li>
+    </template>
+
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
