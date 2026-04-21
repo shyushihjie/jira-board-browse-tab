@@ -94,10 +94,7 @@ async function enableSite(origin, tabId) {
   };
   await writeSiteConfigs(siteConfigs);
   await registerSiteScript(site.origin);
-
-  if (Number.isInteger(tabId)) {
-    await injectContentScript(tabId);
-  }
+  await injectOpenSiteTabs(site.origin, tabId);
 
   return {
     ok: true,
@@ -128,6 +125,7 @@ async function setSiteEnabled(origin, enabled) {
 
   if (enabled) {
     await registerSiteScript(site.origin);
+    await injectOpenSiteTabs(site.origin);
   } else {
     await unregisterSiteScript(site.origin);
   }
@@ -239,6 +237,51 @@ async function injectContentScript(tabId) {
     });
   } catch (error) {
     console.warn('Failed to inject current tab content script', error);
+  }
+}
+
+async function injectOpenSiteTabs(origin, preferredTabId) {
+  const tabIds = await findOpenSiteTabIds(origin, preferredTabId);
+
+  for (const tabId of tabIds) {
+    await injectContentScript(tabId);
+  }
+}
+
+async function findOpenSiteTabIds(origin, preferredTabId) {
+  const tabIds = new Set();
+  if (Number.isInteger(preferredTabId)) {
+    tabIds.add(preferredTabId);
+  }
+
+  let tabs = [];
+  try {
+    tabs = await chrome.tabs.query({});
+  } catch (error) {
+    console.warn('Failed to enumerate open tabs for Jira site injection', error);
+    return [...tabIds];
+  }
+
+  for (const tab of tabs) {
+    if (!Number.isInteger(tab.id) || !isTabOnOrigin(tab, origin)) {
+      continue;
+    }
+
+    tabIds.add(tab.id);
+  }
+
+  return [...tabIds];
+}
+
+function isTabOnOrigin(tab, origin) {
+  if (typeof tab.url !== 'string') {
+    return false;
+  }
+
+  try {
+    return new URL(tab.url).origin === origin;
+  } catch {
+    return false;
   }
 }
 
