@@ -9,10 +9,12 @@
   const SITE_CONFIGS_KEY = 'siteConfigs';
   const MAX_PATH_ELEMENTS = 8;
   const MOVE_THRESHOLD = 6;
+  const CLICK_SUPPRESSION_MS = 750;
   const origin = window.location.origin;
 
   let siteEnabled = false;
   let dragState = resetDragState();
+  let recentPointerOpen = null;
 
   void initialize();
 
@@ -31,19 +33,30 @@
 
       document.addEventListener('pointerdown', handlePointerDown, true);
       document.addEventListener('pointermove', handlePointerMove, true);
+      document.addEventListener('pointerup', handlePointerUp, true);
+      document.addEventListener('pointercancel', handlePointerCancel, true);
       document.addEventListener('dragstart', handleDragStart, true);
       document.addEventListener('click', handleClick, true);
       document.addEventListener('keydown', handleKeyDown, true);
+      window.addEventListener('blur', handleWindowBlur, true);
+      document.addEventListener('visibilitychange', handleVisibilityChange, true);
     });
   }
 
   function handlePointerDown(event) {
+    if (!shouldHandlePointerActivation(event)) {
+      dragState = resetDragState();
+      return;
+    }
+
+    const candidate = findIssueCandidate(event);
     dragState = {
       pointerId: event.pointerId,
       x: event.clientX,
       y: event.clientY,
       moved: false,
-      dragging: false
+      dragging: false,
+      candidate
     };
   }
 
@@ -60,7 +73,44 @@
   }
 
   function handleDragStart() {
+    if (dragState.pointerId === null) {
+      return;
+    }
+
     dragState.dragging = true;
+  }
+
+  function handlePointerUp(event) {
+    try {
+      if (dragState.pointerId !== event.pointerId) {
+        return;
+      }
+
+      const pendingDragState = dragState;
+      dragState = resetDragState();
+
+      if (!shouldHandlePointerActivation(event)) {
+        return;
+      }
+
+      if (!pendingDragState.candidate || pendingDragState.moved || pendingDragState.dragging) {
+        return;
+      }
+
+      const releaseCandidate = findIssueCandidate(event);
+      if (!releaseCandidate || releaseCandidate.browseUrl !== pendingDragState.candidate.browseUrl) {
+        return;
+      }
+
+      rememberRecentPointerOpen(releaseCandidate.browseUrl);
+      openBrowseTab(releaseCandidate.browseUrl, event);
+    } catch (error) {
+      console.warn('Jira Board Browse Tab pointerup handler failed', error);
+    }
+  }
+
+  function handlePointerCancel() {
+    dragState = resetDragState();
   }
 
   function handleClick(event) {
@@ -69,14 +119,15 @@
         return;
       }
 
-      if (dragState.moved || dragState.dragging) {
-        dragState = resetDragState();
-        return;
-      }
-
       const candidate = findIssueCandidate(event);
       dragState = resetDragState();
       if (!candidate) {
+        return;
+      }
+
+      if (shouldSuppressClick(candidate.browseUrl)) {
+        consumeEvent(event);
+        recentPointerOpen = null;
         return;
       }
 
@@ -125,6 +176,18 @@
       !event.ctrlKey &&
       !event.shiftKey &&
       !event.altKey;
+  }
+
+  function handleWindowBlur() {
+    dragState = resetDragState();
+  }
+
+  function handleVisibilityChange() {
+    if (document.visibilityState === 'visible') {
+      return;
+    }
+
+    dragState = resetDragState();
   }
 
   function isEligibleBoardPage() {
@@ -238,8 +301,7 @@
   }
 
   function openBrowseTab(browseUrl, event) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
+    consumeEvent(event);
     window.open(browseUrl, '_blank', 'noopener,noreferrer');
   }
 
@@ -249,7 +311,32 @@
       x: 0,
       y: 0,
       moved: false,
-      dragging: false
+      dragging: false,
+      candidate: null
     };
+  }
+
+  function rememberRecentPointerOpen(browseUrl) {
+    recentPointerOpen = {
+      browseUrl,
+      at: performance.now()
+    };
+  }
+
+  function shouldSuppressClick(browseUrl) {
+    if (!recentPointerOpen) {
+      return false;
+    }
+
+    if (recentPointerOpen.browseUrl !== browseUrl) {
+      return false;
+    }
+
+    return performance.now() - recentPointerOpen.at <= CLICK_SUPPRESSION_MS;
+  }
+
+  function consumeEvent(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
   }
 })();
