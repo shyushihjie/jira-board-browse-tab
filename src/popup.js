@@ -117,7 +117,7 @@ function renderState(state) {
   siteLabel.textContent = state.site.label;
 
   if (!state.hasPermission) {
-    stateMessage.textContent = 'This Jira site has not granted host access yet.';
+    stateMessage.textContent = 'This Jira site has not granted host access yet. The toolbar badge marks eligible Jira boards until you enable the site.';
     enableButton.classList.remove('hidden');
     return;
   }

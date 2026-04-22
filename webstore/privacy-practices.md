@@ -12,6 +12,10 @@ Open Jira Cloud board and backlog issue cards in dedicated `/browse/ISSUE-KEY` t
 
 Used by the popup to inspect the current active tab and determine whether the user is on a supported Jira Cloud board or backlog page before showing site-specific controls.
 
+### `tabs`
+
+Used by the background service worker to inspect tab URLs so the extension can show a badge on unsupported-but-eligible Jira board and backlog tabs until the user grants host access for that Jira site.
+
 ### `scripting`
 
 Used to inject the local content script into Jira tabs that the user explicitly enabled so the extension can intercept board-card activation and open the matching `/browse/ISSUE-KEY` tab.

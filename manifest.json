@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Jira Board Browse Tab",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open Jira board cards in a dedicated /browse issue tab instead of the board sidebar.",
   "minimum_chrome_version": "116",
   "permissions": [
     "activeTab",
+    "tabs",
     "scripting",
     "storage"
   ],

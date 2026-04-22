@@ -1,15 +1,35 @@
 const SITE_CONFIGS_KEY = 'siteConfigs';
+const PROMPTED_TABS_KEY = 'promptedTabs';
+const ACTION_BADGE_TEXT = '!';
+const ACTION_BADGE_BG = '#0052cc';
+const ACTION_BADGE_TEXT_COLOR = '#ffffff';
 
 chrome.runtime.onInstalled.addListener(() => {
-  void reconcileRegisteredSites();
+  void initializeExtensionState();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  void reconcileRegisteredSites();
+  void initializeExtensionState();
 });
 
 chrome.permissions.onRemoved.addListener((removed) => {
   void handleRemovedPermissions(removed.origins ?? []);
+});
+
+chrome.tabs.onRemoved.addListener((tabId) => {
+  void clearPromptedTab(tabId);
+});
+
+chrome.tabs.onActivated.addListener(({ tabId }) => {
+  void refreshActionBadgeForTab(tabId);
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (!('status' in changeInfo) && !('url' in changeInfo)) {
+    return;
+  }
+
+  void refreshActionBadgeForTab(tabId, tab);
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -48,7 +68,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function getSiteState(tabUrl) {
-  const site = parseSupportedSite(tabUrl);
+  const site = parseSupportedBoardPage(tabUrl);
   if (!site) {
     return {
       ok: true,
@@ -95,6 +115,7 @@ async function enableSite(origin, tabId) {
   await writeSiteConfigs(siteConfigs);
   await registerSiteScript(site.origin);
   await injectOpenSiteTabs(site.origin, tabId);
+  await refreshTabsForOrigin(site.origin, tabId);
 
   return {
     ok: true,
@@ -130,6 +151,8 @@ async function setSiteEnabled(origin, enabled) {
     await unregisterSiteScript(site.origin);
   }
 
+  await refreshTabsForOrigin(site.origin);
+
   return { ok: true };
 }
 
@@ -147,6 +170,7 @@ async function disconnectSite(origin) {
   const siteConfigs = await readSiteConfigs();
   delete siteConfigs[site.origin];
   await writeSiteConfigs(siteConfigs);
+  await refreshTabsForOrigin(site.origin);
 
   return { ok: true };
 }
@@ -203,6 +227,7 @@ async function reconcileRegisteredSites() {
   }
 
   await writeSiteConfigs(siteConfigs);
+  await refreshAllTabBadges();
 }
 
 async function handleRemovedPermissions(originPatterns) {
@@ -227,6 +252,16 @@ async function handleRemovedPermissions(originPatterns) {
   if (changed) {
     await writeSiteConfigs(siteConfigs);
   }
+
+  for (const originPattern of originPatterns) {
+    const origin = originPattern.replace(/\/\*$/, '');
+    await refreshTabsForOrigin(origin);
+  }
+}
+
+async function initializeExtensionState() {
+  await setActionBadgeStyle();
+  await reconcileRegisteredSites();
 }
 
 async function injectContentScript(tabId) {
@@ -271,6 +306,162 @@ async function findOpenSiteTabIds(origin, preferredTabId) {
   }
 
   return [...tabIds];
+}
+
+async function refreshTabsForOrigin(origin, preferredTabId) {
+  const tabIds = await findOpenSiteTabIds(origin, preferredTabId);
+
+  for (const tabId of tabIds) {
+    await refreshActionBadgeForTab(tabId);
+  }
+}
+
+async function refreshAllTabBadges() {
+  let tabs = [];
+  try {
+    tabs = await chrome.tabs.query({});
+  } catch (error) {
+    console.warn('Failed to enumerate tabs for badge refresh', error);
+    return;
+  }
+
+  for (const tab of tabs) {
+    if (!Number.isInteger(tab.id)) {
+      continue;
+    }
+
+    await refreshActionBadgeForTab(tab.id, tab);
+  }
+}
+
+async function refreshActionBadgeForTab(tabId, tab = null) {
+  const resolvedTab = tab ?? await getTabSafely(tabId);
+  if (!resolvedTab) {
+    return;
+  }
+
+  const site = parseSupportedBoardPage(resolvedTab.url ?? resolvedTab.pendingUrl ?? '');
+  if (!site) {
+    await clearActionBadge(tabId);
+    return;
+  }
+
+  const hasPermission = await hasOriginPermission(site.originPattern);
+  if (hasPermission) {
+    await clearActionBadge(tabId);
+    return;
+  }
+
+  await chrome.action.setBadgeText({
+    tabId,
+    text: ACTION_BADGE_TEXT
+  });
+  await chrome.action.setTitle({
+    tabId,
+    title: 'Jira Board Browse Tab: enable this Jira site to open board cards in dedicated /browse tabs.'
+  });
+
+  await maybeOpenEnablePopup(tabId, resolvedTab);
+}
+
+async function clearActionBadge(tabId) {
+  await chrome.action.setBadgeText({
+    tabId,
+    text: ''
+  });
+  await chrome.action.setTitle({
+    tabId,
+    title: 'Jira Board Browse Tab'
+  });
+}
+
+async function getTabSafely(tabId) {
+  try {
+    return await chrome.tabs.get(tabId);
+  } catch (error) {
+    console.warn('Failed to inspect tab for badge refresh', error);
+    return null;
+  }
+}
+
+async function setActionBadgeStyle() {
+  await chrome.action.setBadgeBackgroundColor({
+    color: ACTION_BADGE_BG
+  });
+
+  if (typeof chrome.action.setBadgeTextColor === 'function') {
+    await chrome.action.setBadgeTextColor({
+      color: ACTION_BADGE_TEXT_COLOR
+    });
+  }
+}
+
+async function maybeOpenEnablePopup(tabId, tab) {
+  if (typeof chrome.action.openPopup !== 'function') {
+    return;
+  }
+
+  if (!tab.active || tab.status !== 'complete') {
+    return;
+  }
+
+  if (await hasPromptedTab(tabId)) {
+    return;
+  }
+
+  try {
+    const window = await chrome.windows.get(tab.windowId);
+    if (!window.focused) {
+      return;
+    }
+  } catch (error) {
+    console.warn('Failed to inspect window focus before opening popup', error);
+    return;
+  }
+
+  await markPromptedTab(tabId);
+
+  try {
+    await chrome.action.openPopup({
+      windowId: tab.windowId
+    });
+  } catch (error) {
+    console.warn('Failed to open enable popup for unauthorized Jira tab', error);
+  }
+}
+
+async function hasPromptedTab(tabId) {
+  const promptedTabs = await readPromptedTabs();
+  return Boolean(promptedTabs[String(tabId)]);
+}
+
+async function markPromptedTab(tabId) {
+  const promptedTabs = await readPromptedTabs();
+  promptedTabs[String(tabId)] = true;
+  await writePromptedTabs(promptedTabs);
+}
+
+async function clearPromptedTab(tabId) {
+  const promptedTabs = await readPromptedTabs();
+  if (!promptedTabs[String(tabId)]) {
+    return;
+  }
+
+  delete promptedTabs[String(tabId)];
+  await writePromptedTabs(promptedTabs);
+}
+
+async function readPromptedTabs() {
+  const result = await chrome.storage.session.get({
+    [PROMPTED_TABS_KEY]: {}
+  });
+  return result[PROMPTED_TABS_KEY];
+}
+
+async function writePromptedTabs(promptedTabs) {
+  await chrome.storage.session.set({
+    [PROMPTED_TABS_KEY]: promptedTabs
+  });
 }
 
 function isTabOnOrigin(tab, origin) {
@@ -341,6 +532,15 @@ function scriptIdForOrigin(origin) {
   return `jira-board-browse-${origin.replace(/[^a-z0-9]/gi, '-').toLowerCase()}`;
 }
 
+function parseSupportedBoardPage(value) {
+  const site = parseSupportedSite(value);
+  if (!site) {
+    return null;
+  }
+
+  return isEligibleBoardPath(site.pathname) ? site : null;
+}
+
 function parseSupportedSite(value) {
   if (typeof value !== 'string' || value.length === 0) {
     return null;
@@ -366,6 +566,11 @@ function parseSupportedSite(value) {
   return {
     origin: url.origin,
     originPattern: `${url.origin}/*`,
-    hostname: url.hostname
+    hostname: url.hostname,
+    pathname: url.pathname
   };
+}
+
+function isEligibleBoardPath(pathname) {
+  return pathname.includes('/boards/') || pathname.includes('/backlog');
 }
